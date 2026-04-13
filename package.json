@@ -1,6 +1,7 @@
 {
 	"name": "sudoku",
 	"version": "1.0.0",
+	"npmConfigLegacyPeerDeps": true,
 	"scripts": {
 		"prebuild": "rimraf dist",
 		"build": "rollup -c --environment NODE_ENV:production",
