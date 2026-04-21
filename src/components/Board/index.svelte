@@ -7,6 +7,12 @@
 	import { candidates } from '@sudoku/stores/candidates';
 	import Cell from './Cell.svelte';
 
+	// 订阅 gameStore
+	$: state = $gameStore;
+	$: grid = state.grid;
+	$: initialGrid = state.initialGrid;
+	$: invalidCells = state.invalidCells;
+
 	function isSelected(cursorStore, x, y) {
 		return cursorStore.x === x && cursorStore.y === y;
 	}
@@ -24,8 +30,12 @@
 
 	function getValueAtCursor(gridStore, cursorStore) {
 		if (cursorStore.x === null && cursorStore.y === null) return null;
-
 		return gridStore[cursorStore.y][cursorStore.x];
+	}
+
+	// 判断是否为题面数字（不可编辑）
+	function isGiven(x, y) {
+		return initialGrid && initialGrid[y] && initialGrid[y][x] !== 0;
 	}
 </script>
 
@@ -37,7 +47,7 @@
 
 		<div class="bg-white shadow-2xl rounded-xl overflow-hidden w-full h-full max-w-xl grid" class:bg-gray-200={$gamePaused}>
 
-			{#each $gameStore.grid as row, y}
+			{#each grid as row, y}
 				{#each row as value, x}
 					<Cell {value}
 					      cellY={y + 1}
@@ -45,10 +55,10 @@
 					      candidates={$candidates[x + ',' + y]}
 					      disabled={$gamePaused}
 					      selected={isSelected($cursor, x, y)}
-					      userNumber={$gameStore.grid[y][x] === 0}
+					      userNumber={value !== 0 && !isGiven(x, y)}
 					      sameArea={$settings.highlightCells && !isSelected($cursor, x, y) && isSameArea($cursor, x, y)}
-					      sameNumber={$settings.highlightSame && value && !isSelected($cursor, x, y) && getValueAtCursor($gameStore.grid, $cursor) === value}
-					      conflictingNumber={$settings.highlightConflicting && $gameStore.grid[y][x] === 0 && $gameStore.invalidCells.includes(x + ',' + y)} />
+					      sameNumber={$settings.highlightSame && value && !isSelected($cursor, x, y) && getValueAtCursor(grid, $cursor) === value}
+					      conflictingNumber={$settings.highlightConflicting && value !== 0 && invalidCells.includes(x + ',' + y)} />
 				{/each}
 			{/each}
 

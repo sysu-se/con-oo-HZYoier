@@ -129,8 +129,13 @@ export function createGame(params) {
         state.historyIndex = json.historyIndex;
     }
 
+    function getInitialSudoku() {
+        return state.initialSudoku;
+    }
+
     return {
         getSudoku,
+        getInitialSudoku,
         guess,
         undo,
         redo,

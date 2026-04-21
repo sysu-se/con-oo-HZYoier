@@ -11,19 +11,7 @@ import sveltePreprocess from 'svelte-preprocess';
 const mode = process.env.NODE_ENV;
 const production = mode === 'production';
 
-const preprocess = sveltePreprocess({
-	postcss:  {
-		plugins: [
-			require('postcss-import'),
-			require('tailwindcss'),
-			require('autoprefixer'),
-			...(production ? [require('postcss-clean')] : []),
-		],
-	},
-	defaults: {
-		style: 'postcss',
-	},
-});
+const preprocess = sveltePreprocess();
 
 export default {
 	input:   'src/main.js',
@@ -43,12 +31,10 @@ export default {
 
 		svelte({
 			compilerOptions: {
-				// enable run-time checks when not in production
 				dev: !production,
 			},
-
-			// preprocess svelte files
 			preprocess,
+			emitCss: false,
 		}),
 
 		css({
